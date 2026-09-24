@@ -154,3 +154,28 @@ class ModerationRepository:
         await session.flush()
 
         return case_remove_timeout
+
+    @staticmethod
+    async def remove_warn(
+        session: AsyncSession,
+        guild_id: int,
+        user_id: int
+    ) -> ModerationCase | None:
+
+        result = await session.execute(select(ModerationCase).where(
+            ModerationCase.guild_id == guild_id,
+            ModerationCase.user_id == user_id,
+            ModerationCase.type == "WARN",
+            ModerationCase.active.is_(True)
+        ))
+
+        case_remove_warn = result.scalar_one_or_none()
+
+        if case_remove_warn is None:
+            return None
+
+        case_remove_warn.active = False
+
+        await session.flush()
+
+        return case_remove_warn
