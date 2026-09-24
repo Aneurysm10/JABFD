@@ -3,7 +3,9 @@
 
 ---
 
-# About
+# Technologies
+
+* Python 3.13 — Core programming language
 
 
 
