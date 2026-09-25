@@ -33,7 +33,7 @@ class Mod(commands.GroupCog, group_name="moderation"):
 
                 await session.commit()
 
-            except discord.HTTPException:
+            except (discord.HTTPException, discord.Forbidden, discord.NotFound):
                 await session.rollback()
                 raise
 
@@ -63,7 +63,7 @@ class Mod(commands.GroupCog, group_name="moderation"):
 
                 await session.commit()
 
-            except discord.HTTPException:
+            except (discord.HTTPException, discord.Forbidden, discord.NotFound):
                 await session.rollback()
                 raise
 
@@ -93,9 +93,10 @@ class Mod(commands.GroupCog, group_name="moderation"):
 
                 await session.commit()
 
-            except discord.HTTPException:
+            except (discord.HTTPException, discord.Forbidden, discord.NotFound):
                 await session.rollback()
                 raise
+
         await interaction.followup.send(f"{member.mention} was muted")
 
     @app_commands.command(name='unban', description='remove ban from a member')
@@ -116,7 +117,7 @@ class Mod(commands.GroupCog, group_name="moderation"):
 
                 await session.commit()
 
-            except discord.HTTPException:
+            except (discord.HTTPException, discord.Forbidden, discord.NotFound):
                 await session.rollback()
                 raise
 
@@ -138,7 +139,7 @@ class Mod(commands.GroupCog, group_name="moderation"):
 
                 await session.commit()
 
-            except discord.HTTPException:
+            except (discord.HTTPException, discord.Forbidden, discord.NotFound):
                 await session.rollback()
                 raise
 
@@ -151,12 +152,9 @@ class Mod(commands.GroupCog, group_name="moderation"):
     @app_commands.describe(amount='input a number')
     async def purge_command(self, interaction: discord.Interaction, amount: int):
 
+        await interaction.response.defer()
+
         await interaction.channel.purge(limit=amount)
-
-        await interaction.response.send_message(f'Cleared by **{interaction.user.mention}**')
-
-        message = await interaction.original_response()
-        await message.delete()
 
     @app_commands.command(name='warn', description='warns a member')
     @app_commands.checks.has_permissions(moderate_members=True)
@@ -178,8 +176,33 @@ class Mod(commands.GroupCog, group_name="moderation"):
 
             await session.commit()
 
-            await interaction.followup.send(f"{member.mention} has been warned")
+            get_warn = await ModerationRepository.get_user_warns(
+                session,
+                guild_id=interaction.guild.id,
+                user_id=member.id
+            )
 
+            user_warns = len(get_warn)
+
+            if user_warns == 3:
+                try:
+                    await interaction.guild.ban(member, reason=reason)
+                    case_ban = await ModerationRepository.create_ban(
+                        session,
+                        guild_id=interaction.guild.id,
+                        user_id=member.id,
+                        moderator_id=interaction.user.id,
+                        reason=reason
+                    )
+
+                    await session.commit()
+
+                except (discord.HTTPException, discord.Forbidden, discord.NotFound):
+                    await session.rollback()
+                    raise
+
+
+            await interaction.followup.send(f"{member.mention} has been warned")
 
     @app_commands.command(name="unwarn", description="removes warn from a member")
     @app_commands.checks.has_permissions(moderate_members=True)
@@ -199,6 +222,32 @@ class Mod(commands.GroupCog, group_name="moderation"):
             await session.commit()
 
         await interaction.followup.send(f"{member.mention} was unwarned")
+
+    @app_commands.command(name="warnlist", description="sends a warnlist from a member")
+    @app_commands.checks.has_permissions(moderate_members=True)
+    @app_commands.checks.bot_has_permissions(moderate_members=True)
+    @app_commands.describe(user="input user to see the warnlist")
+    async def send_warnlist(self, interaction: discord.Interaction, user: discord.User):
+        await interaction.response.defer()
+
+        async with AsyncSessionLocal() as session:
+            warns = await ModerationRepository.get_user_warns(
+                session,
+                guild_id=interaction.guild.id,
+                user_id=user.id
+            )
+
+            embed = discord.Embed(
+                title=f"warnlist from {user.name}",
+                color=discord.Color.dark_red()
+            )
+
+            embed.set_thumbnail(url=user.avatar)
+
+            for case in warns:
+                embed.add_field(name=f"**Case ID:** {case.id}", value=f"**Reason:** {case.reason}\n **Moderator ID:** {case.moderator_id}", inline=False)
+
+            await interaction.followup.send(embed=embed)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Mod(bot))
