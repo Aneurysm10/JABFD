@@ -95,6 +95,7 @@ class ModerationRepository:
         )
 
         session.add(case_warn)
+        
 
         await session.flush()
 
@@ -167,7 +168,7 @@ class ModerationRepository:
             ModerationCase.user_id == user_id,
             ModerationCase.type == "WARN",
             ModerationCase.active.is_(True)
-        ))
+        ).order_by(ModerationCase.id.desc()).limit(1))
 
         case_remove_warn = result.scalar_one_or_none()
 
@@ -179,3 +180,19 @@ class ModerationRepository:
         await session.flush()
 
         return case_remove_warn
+
+    @staticmethod
+    async def get_user_warns(
+        session: AsyncSession,
+        guild_id: int,
+        user_id: int,
+    ) -> ModerationCase | None:
+
+        result = await session.execute(select(ModerationCase).where(
+            ModerationCase.guild_id == guild_id,
+            ModerationCase.user_id == user_id,
+            ModerationCase.type == "WARN",
+            ModerationCase.active.is_(True)
+        ))
+
+        return list(result.scalars().all())
