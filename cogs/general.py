@@ -2,7 +2,6 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 import time
-import random
 import psutil
 
 class GeneralCommands(commands.Cog):
@@ -10,7 +9,7 @@ class GeneralCommands(commands.Cog):
         self.bot = bot
         super().__init__()
 
-    @app_commands.command(name='ping', description='sends pong')
+    @app_commands.command(name='ping', description='Sends pong')
     async def ping_command(self, interaction: discord.Interaction):
 
         bot_latency = round(self.bot.latency * 1000)
@@ -19,7 +18,7 @@ class GeneralCommands(commands.Cog):
 
 
     @app_commands.command(name='avatar', description='gives you a members avatar')
-    @app_commands.describe(user='select a user')
+    @app_commands.describe(user='Provide user')
     async def show_avatar(self, interaction: discord.Interaction, user: discord.User):
 
         target = user or interaction.user
@@ -39,8 +38,8 @@ class GeneralCommands(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name='userinfo', description='shows your discord account information or information from another user')
-    @app_commands.describe(member='select a member')
+    @app_commands.command(name='userinfo', description='Shows your discord account information or information from another user')
+    @app_commands.describe(member='Provide member')
     async def userinfo_command(self, interaction: discord.Interaction, member: discord.Member):
 
         member = member or interaction.user
@@ -82,7 +81,7 @@ class GeneralCommands(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
 
-    @app_commands.command(name="about", description="shows some stats about the bot")
+    @app_commands.command(name="about", description="Shows some stats about the bot")
     async def uptime_command(self, interaction: discord.Interaction):
         timeUp = time.monotonic() - self.bot.startTime
         hours = int(timeUp / 3600)
