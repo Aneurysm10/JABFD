@@ -17,7 +17,7 @@ class GeneralCommands(commands.Cog):
         await interaction.response.send_message(f'Pong!\n **Guild:** {interaction.guild.id}\n **Bot latency:** {bot_latency}ms\n **Discord.py:** 2.7.1')
 
 
-    @app_commands.command(name='avatar', description='gives you a members avatar')
+    @app_commands.command(name='avatar', description='Gives you a members avatar')
     @app_commands.describe(user='Provide user')
     async def show_avatar(self, interaction: discord.Interaction, user: discord.User):
 
@@ -58,7 +58,7 @@ class GeneralCommands(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name='serverinfo', description='shows server information')
+    @app_commands.command(name='serverinfo', description='Shows server information')
     async def serverinfo_command(self, interaction: discord.Interaction):
 
         created_at = interaction.guild.created_at.strftime("%b %d %Y")
