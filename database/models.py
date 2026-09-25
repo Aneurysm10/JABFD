@@ -23,5 +23,5 @@ class ModerationCase(Base):
     user_id: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True)
     moderator_id: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True)
     type: Mapped[str] = mapped_column(Enum(ModerationType, name="moderation_cases"), nullable=False)
-    reason: Mapped[str] = mapped_column(Text)
+    reason: Mapped[str] = mapped_column(Text, nullable=True)
     active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
