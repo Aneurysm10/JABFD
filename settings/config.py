@@ -9,6 +9,9 @@ database_url = os.getenv("DATABASE_URL")
 if not token:
     raise ValueError("discord token ausente")
 
+if not database_url:
+    raise ValueError("banco de dados ausente")
+
 class Config:
 
     TOKEN = token
