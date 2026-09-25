@@ -12,19 +12,19 @@ async def handle_app_command_error(
 ):
 
     if isinstance(error, app_commands.MissingPermissions):
-        message = ("You do not have the required permissions to use this command1")
+        message = ("You do not have the required permissions to use this command!")
 
     elif isinstance(error, app_commands.BotMissingPermissions):
         message = ("I do not have the required permissions to execute this command!")
 
     elif isinstance(error, app_commands.TransformerError):
-         message = ("One or more of the provided arguments are invalid")
+         message = ("One or more of the provided arguments are invalid!")
 
     elif isinstance(error, app_commands.NoPrivateMessage):
-            message = ("This command can only be used inside a server")
+            message = ("This command can only be used inside a server!")
 
     elif isinstance(error, app_commands.CheckFailure):
-        message = str(error) or "You cannot use this comamnd"
+        message = str(error) or "You cannot use this comamnd!"
 
     elif isinstance(error, app_commands.CommandInvokeError):
          await handle_generic_error(interaction, error.original)
