@@ -12,10 +12,10 @@ class Mod(commands.GroupCog, group_name="moderation"):
         super().__init__()
 
 
-    @app_commands.command(name='ban', description='ban a member from the server')
+    @app_commands.command(name='ban', description='Bans a member from the server')
     @app_commands.checks.has_permissions(ban_members=True)
     @app_commands.checks.bot_has_permissions(ban_members=True)
-    @app_commands.describe(user='select a user to ban', reason='the reason for the ban')
+    @app_commands.describe(user='Input member id or mention member', reason='Provide reason')
     async def ban_user(self, interaction: discord.Interaction, user: discord.User, * ,reason: str | None):
         await interaction.response.defer()
 
@@ -39,10 +39,10 @@ class Mod(commands.GroupCog, group_name="moderation"):
 
         await interaction.followup.send(f"{user.mention} was banned")
 
-    @app_commands.command(name='kick', description='kicks a member from the server')
+    @app_commands.command(name='kick', description='Kicks a member from the server')
     @app_commands.checks.has_permissions(kick_members=True)
     @app_commands.checks.bot_has_permissions(kick_members=True)
-    @app_commands.describe(member='select a user to kick', reason='the reason for the kick')
+    @app_commands.describe(member='Provide member', reason='the reason for the kick')
     async def kick_user(self, interaction: discord.Interaction, member: discord.Member, * ,reason: str | None):
 
         await interaction.response.defer()
@@ -70,10 +70,10 @@ class Mod(commands.GroupCog, group_name="moderation"):
 
         await interaction.followup.send(f'**{member.mention}** was kicked')
 
-    @app_commands.command(name='timeout', description='timeout a member')
+    @app_commands.command(name='timeout', description='Mutes a member from the server')
     @app_commands.checks.has_permissions(moderate_members=True)
     @app_commands.checks.bot_has_permissions(moderate_members=True)
-    @app_commands.describe(member='select a member to timeout', reason='the reason for the timeout')
+    @app_commands.describe(member='Provide member', reason='Provide reason')
     async def timeout_user(self, interaction: discord.Interaction, member: discord.Member, minutes: int, * ,reason: str | None):
         await interaction.response.defer()
 
@@ -99,10 +99,10 @@ class Mod(commands.GroupCog, group_name="moderation"):
 
         await interaction.followup.send(f"{member.mention} was muted")
 
-    @app_commands.command(name='unban', description='remove ban from a member')
+    @app_commands.command(name='unban', description='Unbans a member')
     @app_commands.checks.has_permissions(ban_members=True)
     @app_commands.checks.bot_has_permissions(ban_members=True)
-    @app_commands.describe(user='select a user to remove the ban')
+    @app_commands.describe(user='Input member id')
     async def unban_user(self, interaction: discord.Interaction, user: discord.User):
         await interaction.response.defer()
 
@@ -122,8 +122,8 @@ class Mod(commands.GroupCog, group_name="moderation"):
                 raise
 
 
-    @app_commands.command(name='removetimeout', description='remove timeout from a member')
-    @app_commands.describe(member='select a member to remove the timeout')
+    @app_commands.command(name='removetimeout', description='Remove timeout from a member')
+    @app_commands.describe(member='Provide member')
     async def unmute_user(self, interaction: discord.Interaction, member: discord.Member):
         await interaction.response.defer()
 
@@ -146,20 +146,20 @@ class Mod(commands.GroupCog, group_name="moderation"):
 
         await interaction.followup.send(f'**{member.mention}** was unmuted')
 
-    @app_commands.command(name='purge', description='removes messages')
+    @app_commands.command(name='purge', description='Clears a certain number of messages from the channel')
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.checks.bot_has_permissions(manage_messages=True)
-    @app_commands.describe(amount='input a number')
+    @app_commands.describe(amount='input number of messages')
     async def purge_command(self, interaction: discord.Interaction, amount: int):
 
         await interaction.response.defer()
 
         await interaction.channel.purge(limit=amount)
 
-    @app_commands.command(name='warn', description='warns a member')
+    @app_commands.command(name='warn', description='Warns a member')
     @app_commands.checks.has_permissions(moderate_members=True)
     @app_commands.checks.bot_has_permissions(moderate_members=True)
-    @app_commands.describe(member="the member to warn", reason="the reason for ther warn")
+    @app_commands.describe(member="Provide member", reason="Provide reason")
     async def warn_member(self, interaction: discord.Interaction, member: discord.Member, * ,reason: str | None):
 
         await interaction.response.defer()
@@ -204,11 +204,11 @@ class Mod(commands.GroupCog, group_name="moderation"):
 
             await interaction.followup.send(f"{member.mention} has been warned")
 
-    @app_commands.command(name="unwarn", description="removes warn from a member")
+    @app_commands.command(name="unwarn", description="Removes a warning from a user")
     @app_commands.checks.has_permissions(moderate_members=True)
     @app_commands.checks.bot_has_permissions(moderate_members=True)
-    @app_commands.describe(member='the member to remove the warn')
-    async def remove_the_warn(self, interaction: discord.Interaction, member: discord.Member):
+    @app_commands.describe(user='Input member id or mention member')
+    async def remove_the_warn(self, interaction: discord.Interaction, user: discord.User):
         await interaction.response.defer()
 
         async with AsyncSessionLocal() as session:
@@ -216,17 +216,17 @@ class Mod(commands.GroupCog, group_name="moderation"):
             case = await ModerationRepository.remove_warn(
                 session,
                 guild_id=interaction.guild_id,
-                user_id=member.id,
+                user_id=user.id,
             )
 
             await session.commit()
 
-        await interaction.followup.send(f"{member.mention} was unwarned")
+        await interaction.followup.send(f"{user.mention} was unwarned")
 
-    @app_commands.command(name="warnlist", description="sends a warnlist from a member")
+    @app_commands.command(name="warnlist", description="Send a list of user warnings")
     @app_commands.checks.has_permissions(moderate_members=True)
     @app_commands.checks.bot_has_permissions(moderate_members=True)
-    @app_commands.describe(user="input user to see the warnlist")
+    @app_commands.describe(user="Provide user")
     async def send_warnlist(self, interaction: discord.Interaction, user: discord.User):
         await interaction.response.defer()
 
