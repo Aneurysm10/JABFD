@@ -8,16 +8,16 @@ class FunCommands(commands.GroupCog, group_name="fun"):
         self.bot = bot
         super().__init__()
 
-    @app_commands.command(name='reverse', description='sends a text reversed')
-    @app_commands.describe(text='the text to reverse')
-    async def reverse_text(self, interaction: discord.Interaction, text: str):
+    @app_commands.command(name='reverse', description='Sends a reversed text')
+    @app_commands.describe(sentence='Input sentence')
+    async def reverse_text(self, interaction: discord.Interaction, sentence: str):
 
-        reverse = text[::-1]
+        reverse = sentence[::-1]
             
         await interaction.response.send_message(reverse)
     
-    @app_commands.command(name='eightball', description='asks the magic 8ball')
-    @app_commands.describe(question='make a question')
+    @app_commands.command(name='eightball', description='Asks the magic 8ball')
+    @app_commands.describe(question='Input question')
     async def ask(self, interaction: discord.Interaction, question: str):
 
         possibilities = [
@@ -43,7 +43,7 @@ class FunCommands(commands.GroupCog, group_name="fun"):
         await interaction.response.send_message(embed=embed)
     
     
-    @app_commands.command(name='coinflip', description='flips a coin')
+    @app_commands.command(name='coinflip', description='Flips a coin')
     async def flip_coin(self, interaction: discord.Interaction):
 
         coin = ['Heads', 'Tails']
@@ -67,8 +67,8 @@ class FunCommands(commands.GroupCog, group_name="fun"):
         await interaction.response.send_message(f"{clapify_text}")
 
 
-    @app_commands.command(name='pick', description='chooses a random item from a sentence')
-    @app_commands.describe(sentence="input sentence")
+    @app_commands.command(name='pick', description='Chooses a random element from the supplied choices')
+    @app_commands.describe(sentence="Input sentence")
     async def pick_command(self, interaction: discord.Interaction, sentence: str):
 
         pick_list = sentence.replace(",", " ").split()
