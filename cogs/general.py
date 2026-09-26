@@ -16,7 +16,6 @@ class GeneralCommands(commands.Cog):
 
         await interaction.response.send_message(f'Pong!\n **Guild:** {interaction.guild.id}\n **Bot latency:** {bot_latency}ms\n **Discord.py:** 2.7.1')
 
-
     @app_commands.command(name='avatar', description='Gives you a members avatar')
     @app_commands.describe(user='Provide user')
     async def show_avatar(self, interaction: discord.Interaction, user: discord.User):
@@ -77,9 +76,7 @@ class GeneralCommands(commands.Cog):
         if interaction.guild.icon:
             embed.set_thumbnail(url=interaction.guild.icon.url)
 
-
         await interaction.response.send_message(embed=embed)
-
 
     @app_commands.command(name="about", description="Shows some stats about the bot")
     async def uptime_command(self, interaction: discord.Interaction):
