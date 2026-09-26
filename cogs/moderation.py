@@ -44,9 +44,7 @@ class Mod(commands.GroupCog, group_name="moderation"):
     @app_commands.checks.bot_has_permissions(kick_members=True)
     @app_commands.describe(member='Provide member', reason='the reason for the kick')
     async def kick_user(self, interaction: discord.Interaction, member: discord.Member, * ,reason: str | None):
-
         await interaction.response.defer()
-
 
         async with AsyncSessionLocal() as session:
             try:
@@ -151,7 +149,6 @@ class Mod(commands.GroupCog, group_name="moderation"):
     @app_commands.checks.bot_has_permissions(manage_messages=True)
     @app_commands.describe(amount='input number of messages')
     async def purge_command(self, interaction: discord.Interaction, amount: int):
-
         await interaction.response.defer()
 
         await interaction.channel.purge(limit=amount)
@@ -161,11 +158,9 @@ class Mod(commands.GroupCog, group_name="moderation"):
     @app_commands.checks.bot_has_permissions(moderate_members=True)
     @app_commands.describe(member="Provide member", reason="Provide reason")
     async def warn_member(self, interaction: discord.Interaction, member: discord.Member, * ,reason: str | None):
-
         await interaction.response.defer()
 
         async with AsyncSessionLocal() as session:
-
             case = await ModerationRepository.create_warn(
                 session,
                 guild_id=interaction.guild.id,
@@ -212,7 +207,6 @@ class Mod(commands.GroupCog, group_name="moderation"):
         await interaction.response.defer()
 
         async with AsyncSessionLocal() as session:
-
             case = await ModerationRepository.remove_warn(
                 session,
                 guild_id=interaction.guild_id,
@@ -221,7 +215,7 @@ class Mod(commands.GroupCog, group_name="moderation"):
 
             await session.commit()
 
-        await interaction.followup.send(f"{user.mention} was unwarned")
+        await interaction.followup.send(f"Deleted 1 warn from {user.mention}")
 
     @app_commands.command(name="warnlist", description="Send a list of user warnings")
     @app_commands.checks.has_permissions(moderate_members=True)
