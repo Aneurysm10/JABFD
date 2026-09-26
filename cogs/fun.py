@@ -56,7 +56,6 @@ class FunCommands(commands.GroupCog, group_name="fun"):
             color=discord.Color.random()
         )
     
-            
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="clapify", description="👋makes👋a👋text👋look👋like👋this👋")
@@ -65,7 +64,6 @@ class FunCommands(commands.GroupCog, group_name="fun"):
         clapify_text = "👋" + "👋".join(sentence.split()) + "👋"
 
         await interaction.response.send_message(f"{clapify_text}")
-
 
     @app_commands.command(name='pick', description='Chooses a random element from the supplied choices')
     @app_commands.describe(sentence="Input sentence")
